@@ -1,2 +1,6 @@
 .idea
 a.out
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
