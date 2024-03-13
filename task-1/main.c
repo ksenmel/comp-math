@@ -16,7 +16,6 @@ int main() {
     for (int i = 0; i < lthreads; ++i) {
         printf("\n--------------------------------------- \n");
         printf("N: %d, threads: %d \n \n", N, threads[i]);
-        printf("serial alg: ");
         run_parallel(N, threads[i], d2u, u);
         }
 
