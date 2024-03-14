@@ -3,9 +3,6 @@
 
 #include "parallel.c"
 
-double d2u_1 (double x, double y) { return 6 * x + 6 * y; }
-double u_1 (double x, double y) { return pow(x, 3) + pow(y, 3); }
-
 double d2u_2 (double x, double y) { return 6000 * x + 12000 * y; }
 double u_2(double x, double y) { return 1000 * pow(x, 3) + 2000 * pow(y, 3); }
 

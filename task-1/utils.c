@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 #define BLOCK_SIZE 32
-#define EPS 0.1
+#define EPS 0.001
 
 typedef struct grid {
     int size;

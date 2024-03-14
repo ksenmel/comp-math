@@ -86,10 +86,7 @@ void run_parallel(int n, int threads, fun_p f, fun_p u) {
     time_t t1 = time (NULL);
     iter = process_grid(g);
     time_t t2 = time (NULL);
-    time_t t =  t1 - t2;
+    time_t t =  t2 - t1;
 
-    printf("%ld\n", t1);
-    printf("%ld\n", t2);
-
-    printf("time: %0.30ld, iterations: %d \n", t, iter);
+    printf("time: %ld sec, iterations amount: %d \n", t, iter);
 }
