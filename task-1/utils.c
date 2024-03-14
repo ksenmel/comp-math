@@ -64,8 +64,3 @@ void free_grid(grid *g) {
     free(g);
     g = NULL;
 }
-
-typedef struct exec_res {
-    int iter;
-    double time;
-} exec_res;
