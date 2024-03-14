@@ -1,5 +1,5 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #define BLOCK_SIZE 32
 #define EPS 0.1
@@ -48,11 +48,16 @@ grid *create_grid (int size, fun_p f, fun_p u) {
 
     // bound values
     for (int i = 0; i < size + 2; i++) {
-        g->u[i][0] = u(i * g->h, 0);
-        g->u[i][size + 1] = u(i * g->h, (size + 1) * g->h);
-        g->u[0][i] = u(0, i * g->h);
-        g->u[size + 1][i] = u((size + 1) * g->h, i * g->h);
+        for (int j = 0; j <= size + 2; j++) {
+
+            if ((i == 0) || (j == 0) || (i == (size + 1)) || (j == (size + 1))) {
+                g->u[i][j] = u(i * g->h, j * g->h);
+            }
+            else {
+                g->u[i][j] = rand();
+        }
     }
+}
 
     return g;
 }

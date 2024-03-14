@@ -1,4 +1,6 @@
 #include <math.h>
+#include <time.h>
+
 #include "utils.c"
 
 static int min(int a, int b) { return a < b ? a : b; }
@@ -26,7 +28,7 @@ int process_grid (grid* g) {
     int iter = 0;
     double dmax; // max change in u values
 
-    int nb = g->size / BLOCK_SIZE; //number of blocks
+    int nb = g->size - 2 / BLOCK_SIZE; //number of blocks. (n-2) because bounds are already given
     if (BLOCK_SIZE * nb != g->size) nb += 1;
 
     double* dm = calloc(nb, sizeof(*dm));
@@ -44,6 +46,7 @@ int process_grid (grid* g) {
 
             int i, j;
             double d;
+
 #pragma omp parallel for shared(nx, dm) private(i, j, d)
             for (i = 0; i < nx + 1; i++) {
                 j = nx - i;
@@ -56,18 +59,17 @@ int process_grid (grid* g) {
         for (int nx = nb - 2; nx >= 0; nx--) {
             int i, j;
             double d;
+
 #pragma omp parallel for shared(nx, dm) private(i, j, d)
             for (i = nb - nx - 1; i < nb; i++) {
-                j = nb + ((nb - 2) - nx) - i;
+                j = 2 * (nb - 1) - nx - i;
                 d = process_block(g, i, j);
-                if (dm[i] < d)
-                    dm[i] = d;
+                if (dm[i] < d) dm[i] = d;
             }
         }
 
         for (int i = 0; i < nb; i++)
-            if (dmax < dm[i])
-                dmax = dm[i];
+            if (dmax < dm[i]) dmax = dm[i];
 
     } while (dmax > EPS);
     free(dm);
@@ -76,15 +78,18 @@ int process_grid (grid* g) {
 }
 
 void run_parallel(int n, int threads, fun_p f, fun_p u) {
-    int iter = 0;
-
+    int iter;
     grid *g = create_grid(n, f, u);
 
     omp_set_num_threads(threads);
-    double t1 = omp_get_wtime();
-    iter = process_grid(g);
-    double t2 = omp_get_wtime();
-    double time_difference = t2 - t1;
 
-    printf("time: %0.15f, iterations: %d \n", time_difference, iter);
+    time_t t1 = time (NULL);
+    iter = process_grid(g);
+    time_t t2 = time (NULL);
+    time_t t =  t1 - t2;
+
+    printf("%ld\n", t1);
+    printf("%ld\n", t2);
+
+    printf("time: %0.30ld, iterations: %d \n", t, iter);
 }
