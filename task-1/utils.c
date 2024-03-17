@@ -54,7 +54,7 @@ grid *create_grid (int size, fun_p f, fun_p u) {
                 g->u[i][j] = u(i * g->h, j * g->h);
             }
             else {
-                g->u[i][j] = rand();
+                g->u[i][j] = 42;
         }
     }
 }

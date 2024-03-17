@@ -3,21 +3,20 @@
 
 #include "utils.c"
 
-static int min(int a, int b) { return a < b ? a : b; }
-
 double process_block(grid *g, int a, int b) {
     int i_start = 1 + a * BLOCK_SIZE;
-    int i_end = min(i_start + BLOCK_SIZE, g->size);
+    int i_end = i_start + BLOCK_SIZE < g->size ? i_start + BLOCK_SIZE : g->size;
     int j_start = 1 + b * BLOCK_SIZE;
-    int j_end = min(j_start + BLOCK_SIZE, g->size);
+    int j_end = j_start + BLOCK_SIZE < g->size ? j_start + BLOCK_SIZE : g->size;
 
     double dmax = 0;
+
     for (int i = i_start; i < i_end; i++) {
         for (int j = j_start; j < j_end; j++) {
-            double temp = g->u[i][j];
+            double tmp = g->u[i][j];
             g->u[i][j] = 0.25 * (g->u[i - 1][j] + g->u[i + 1][j] + g->u[i][j - 1] +
                                  g->u[i][j + 1] - g->h * g->h * g->f[i][j]);
-            double dm = fabs(temp - g->u[i][j]);
+            double dm = fabs(tmp - g->u[i][j]);
             if (dmax < dm) dmax = dm;
         }
     }
@@ -28,7 +27,7 @@ int process_grid (grid* g) {
     int iter = 0;
     double dmax; // max change in u values
 
-    int nb = g->size - 2 / BLOCK_SIZE; //number of blocks. (n-2) because bounds are already given
+    int nb = g->size - 2 / BLOCK_SIZE; // number of blocks. (n-2) because bounds values are already given
     if (BLOCK_SIZE * nb != g->size) nb += 1;
 
     double* dm = calloc(nb, sizeof(*dm));
@@ -69,7 +68,7 @@ int process_grid (grid* g) {
         }
 
         for (int i = 0; i < nb; i++)
-            if (dmax < dm[i]) dmax = dm[i];
+            if (dmax < dm[i]) dmax = dm[i]; // for whole grid
 
     } while (dmax > EPS);
     free(dm);
