@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define BLOCK_SIZE 32
-#define EPS 0.001
+#define BLOCK_SIZE 64
+#define EPS 0.1
 
 typedef struct grid {
     int size;
@@ -10,6 +10,11 @@ typedef struct grid {
     double **u;
     double **f;
 } grid;
+
+typedef struct res {
+    int iter;
+    double t;
+} res;
 
 typedef double (*fun_p)(double, double);
 
@@ -49,15 +54,14 @@ grid *create_grid (int size, fun_p f, fun_p u) {
     // bound values
     for (int i = 0; i < size + 2; i++) {
         for (int j = 0; j <= size + 2; j++) {
-
             if ((i == 0) || (j == 0) || (i == (size + 1)) || (j == (size + 1))) {
                 g->u[i][j] = u(i * g->h, j * g->h);
             }
             else {
                 g->u[i][j] = 42;
+            }
         }
     }
-}
 
     return g;
 }

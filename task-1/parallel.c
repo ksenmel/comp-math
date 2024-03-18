@@ -1,13 +1,16 @@
 #include <math.h>
 #include <time.h>
+#include <omp.h>
 
 #include "utils.c"
 
+static int min(int a, int b) { return a < b ? a : b; }
+
 double process_block(grid *g, int a, int b) {
     int i_start = 1 + a * BLOCK_SIZE;
-    int i_end = i_start + BLOCK_SIZE < g->size ? i_start + BLOCK_SIZE : g->size;
+    int i_end = min(i_start + BLOCK_SIZE, g->size - 1);
     int j_start = 1 + b * BLOCK_SIZE;
-    int j_end = j_start + BLOCK_SIZE < g->size ? j_start + BLOCK_SIZE : g->size;
+    int j_end = min(j_start + BLOCK_SIZE, g->size - 1);
 
     double dmax = 0;
 
@@ -27,7 +30,7 @@ int process_grid (grid* g) {
     int iter = 0;
     double dmax; // max change in u values
 
-    int nb = g->size - 2 / BLOCK_SIZE; // number of blocks. (n-2) because bounds values are already given
+    int nb = g->size / BLOCK_SIZE; // number of blocks.
     if (BLOCK_SIZE * nb != g->size) nb += 1;
 
     double* dm = calloc(nb, sizeof(*dm));
@@ -55,12 +58,12 @@ int process_grid (grid* g) {
         }
 
         //process blocks under the diagonal (fading)
-        for (int nx = nb - 2; nx >= 0; nx--) {
+        for (int nx = nb - 1; nx >= 1; nx--) {
             int i, j;
             double d;
 
 #pragma omp parallel for shared(nx, dm) private(i, j, d)
-            for (i = nb - nx - 1; i < nb; i++) {
+            for (i = nb - nx; i < nb; i++) {
                 j = 2 * (nb - 1) - nx - i;
                 d = process_block(g, i, j);
                 if (dm[i] < d) dm[i] = d;
@@ -76,16 +79,18 @@ int process_grid (grid* g) {
     return iter;
 }
 
-void run_parallel(int n, int threads, fun_p f, fun_p u) {
-    int iter;
+res run_parallel(int n, int threads, fun_p f, fun_p u) {
     grid *g = create_grid(n, f, u);
 
     omp_set_num_threads(threads);
 
-    time_t t1 = time (NULL);
-    iter = process_grid(g);
-    time_t t2 = time (NULL);
-    time_t t =  t2 - t1;
+    double t1 = omp_get_wtime();
+    int iter = process_grid(g);
+    double t2 = omp_get_wtime();
+    double t = t2 - t1;
 
-    printf("time: %ld sec, iterations amount: %d \n", t, iter);
+    res res;
+    res.iter = iter;
+    res.t = t;
+    return res;
 }
