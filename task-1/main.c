@@ -18,7 +18,7 @@ double d2u_4 (double x, double y) { return 0; }
 int main() {
 
     int size[] = {100, 200, 300, 500, 1000};
-    int threads[] = {1, 8};
+    int threads[] = {1, 8, 12};
 
     int lsize = sizeof(size) / sizeof(size[0]);
     int lthreads = sizeof(threads) / sizeof(threads[0]);
@@ -26,7 +26,7 @@ int main() {
     for (int n = 0; n < lsize; n++) {
         for (int i = 0; i < lthreads; ++i) {
             printf("\n--------------------------------------- \n");
-            res test = run_parallel(size[n], threads[i], d2u_2, u_2);
+            res test = run_parallel(size[n], threads[i], d2u_4, u_4);
             printf("Res for N: %d, threads: %d \n", size[n], threads[i]);
             printf("%d iterations, %7.2f s. \n", test.iter, test.t);
         }
