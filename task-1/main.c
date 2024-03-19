@@ -17,7 +17,7 @@ double d2u_4 (double x, double y) { return 0; }
 
 int main() {
 
-    int size[] = {100, 200, 300, 500, 1000};
+    int size[] = {1000, 2000, 5000};
     int threads[] = {1, 8, 12};
 
     int lsize = sizeof(size) / sizeof(size[0]);
