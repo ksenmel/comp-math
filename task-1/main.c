@@ -15,9 +15,12 @@ double d2u_3 (double x, double y) { return exp(x*y)*pow(y, 2) + exp(x*y)*pow(x, 
 double u_4(double x, double y) { return x + y; }
 double d2u_4 (double x, double y) { return 0; }
 
+double u_5(double x, double y) { return 1 * x * x * y * (x - 1) * (y - 1); }
+double d2u_5(double x, double y) { return 1 * (6 * x - 2) * (y - 1) * y + 2 * 1 * (x - 1) * x * x; }
+
 int main() {
 
-    int size[] = {1000, 2000, 5000};
+    int size[] = {100, 300, 500, 1000};
     int threads[] = {1, 8, 12};
 
     int lsize = sizeof(size) / sizeof(size[0]);
@@ -26,7 +29,7 @@ int main() {
     for (int n = 0; n < lsize; n++) {
         for (int i = 0; i < lthreads; ++i) {
             printf("\n--------------------------------------- \n");
-            res test = run_parallel(size[n], threads[i], d2u_4, u_4);
+            res test = run_parallel(size[n], threads[i], d2u_5, u_5);
             printf("Res for N: %d, threads: %d \n", size[n], threads[i]);
             printf("%d iterations, %7.2f s. \n", test.iter, test.t);
         }
